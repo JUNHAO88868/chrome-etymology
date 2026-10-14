@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "DeepSeek Etymology — 划词查词源",
+  "version": "1.1.0",
+  "description": "选中网页上的英文单词，一键用 DeepSeek 拆解词根词缀、还原词源现场画面，真正看懂一个单词「为什么是这个意思」。",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://api.deepseek.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["style.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "DeepSeek 词源插件 · 设置与 API Key",
+    "default_popup": "options.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

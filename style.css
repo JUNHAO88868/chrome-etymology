@@ -1,0 +1,256 @@
+/* ==================================================================
+   DeepSeek Etymology — 网页内 UI 样式
+   说明：关键属性加 !important，避免被宿主页面的全局样式（如 * { }
+   或 button { }）污染，这是内容脚本注入 UI 的常见坑。
+   ================================================================== */
+
+#dse-word-btn,
+#dse-word-panel,
+#dse-word-panel * {
+  box-sizing: border-box !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif !important;
+}
+
+/* ---------- 划词按钮 ---------- */
+#dse-word-btn {
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  background: linear-gradient(135deg, #1a73e8 0%, #0b57d0 100%) !important;
+  color: #fff !important;
+  padding: 6px 12px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  border-radius: 999px !important;
+  border: none !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  white-space: nowrap !important;
+  box-shadow: 0 4px 14px rgba(11, 87, 208, 0.4) !important;
+  animation: dse-pop 0.12s ease-out !important;
+}
+
+#dse-word-btn:hover {
+  filter: brightness(1.08) !important;
+  transform: translateY(-1px) !important;
+}
+
+@keyframes dse-pop {
+  from { opacity: 0; transform: translateY(4px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---------- 词源卡片 ---------- */
+#dse-word-panel {
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  width: 420px !important;
+  max-width: calc(100vw - 24px) !important;
+  max-height: 70vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #fff !important;
+  color: #24292f !important;
+  border: 1px solid #e3e6ea !important;
+  border-radius: 12px !important;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.22) !important;
+  overflow: hidden !important;
+  text-align: left !important;
+  animation: dse-pop 0.14s ease-out !important;
+}
+
+#dse-word-panel .dse-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  padding: 10px 14px !important;
+  background: #f6f8fb !important;
+  border-bottom: 1px solid #eceff3 !important;
+  flex: 0 0 auto !important;
+}
+
+#dse-word-panel .dse-title {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #0b57d0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+#dse-word-panel .dse-close {
+  flex: 0 0 auto !important;
+  width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  color: #8b949e !important;
+  cursor: pointer !important;
+}
+
+#dse-word-panel .dse-close:hover {
+  background: #e6eaf0 !important;
+  color: #24292f !important;
+}
+
+#dse-word-panel .dse-body {
+  padding: 12px 16px !important;
+  overflow-y: auto !important;
+  flex: 1 1 auto !important;
+  font-size: 13.5px !important;
+  line-height: 1.7 !important;
+  color: #24292f !important;
+  word-break: break-word !important;
+}
+
+#dse-word-panel .dse-body h2 {
+  margin: 14px 0 4px 0 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #0b57d0 !important;
+  line-height: 1.4 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+#dse-word-panel .dse-body h3 {
+  margin: 10px 0 3px 0 !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: #0b57d0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+#dse-word-panel .dse-body h2::before,
+#dse-word-panel .dse-body h3::before {
+  content: "▸ " !important;
+  color: #e8710a !important;
+}
+
+#dse-word-panel .dse-body strong {
+  color: #c2410c !important;
+  font-weight: 700 !important;
+}
+
+#dse-word-panel .dse-body em {
+  font-style: italic !important;
+  color: #57606a !important;
+}
+
+#dse-word-panel .dse-body ul {
+  margin: 4px 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+#dse-word-panel .dse-body li {
+  position: relative !important;
+  margin: 0 0 3px 0 !important;
+  padding-left: 16px !important;
+  list-style: none !important;
+}
+
+#dse-word-panel .dse-body li::before {
+  content: "▸" !important;
+  position: absolute !important;
+  left: 2px !important;
+  color: #e8710a !important;
+}
+
+#dse-word-panel .dse-body hr {
+  border: none !important;
+  border-top: 1px solid #eceff3 !important;
+  margin: 8px 0 !important;
+}
+
+#dse-word-panel .dse-footer {
+  flex: 0 0 auto !important;
+  padding: 6px 14px !important;
+  border-top: 1px solid #eceff3 !important;
+  background: #fafbfc !important;
+  font-size: 11px !important;
+  color: #8b949e !important;
+  text-align: right !important;
+}
+
+/* ---------- 状态区 ---------- */
+#dse-word-panel .dse-loading {
+  padding: 10px 2px !important;
+  color: #57606a !important;
+  font-size: 13px !important;
+}
+
+#dse-word-panel .dse-dots {
+  display: flex !important;
+  gap: 5px !important;
+  margin-top: 10px !important;
+}
+
+#dse-word-panel .dse-dots i {
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 50% !important;
+  background: #1a73e8 !important;
+  animation: dse-bounce 1.2s infinite ease-in-out !important;
+}
+
+#dse-word-panel .dse-dots i:nth-child(2) { animation-delay: 0.15s !important; }
+#dse-word-panel .dse-dots i:nth-child(3) { animation-delay: 0.3s !important; }
+
+@keyframes dse-bounce {
+  0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+  40%           { opacity: 1;   transform: translateY(-4px); }
+}
+
+#dse-word-panel .dse-error {
+  padding: 8px 2px !important;
+  color: #b42318 !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+}
+
+#dse-word-panel .dse-notice {
+  padding: 4px 2px !important;
+  font-size: 13px !important;
+  color: #24292f !important;
+}
+
+#dse-word-panel .dse-notice-title {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #0b57d0 !important;
+  margin-bottom: 8px !important;
+}
+
+#dse-word-panel .dse-notice p {
+  margin: 0 0 8px 0 !important;
+  padding: 0 !important;
+  color: #57606a !important;
+  line-height: 1.65 !important;
+}
+
+#dse-word-panel .dse-primary {
+  display: inline-block !important;
+  margin-top: 4px !important;
+  padding: 7px 14px !important;
+  background: #1a73e8 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+}
+
+#dse-word-panel .dse-primary:hover {
+  background: #0b57d0 !important;
+}

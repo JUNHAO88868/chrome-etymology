@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>DeepSeek Etymology · 设置</title>
+  <style>
+    :root {
+      --blue: #1a73e8;
+      --blue-dark: #0b57d0;
+      --orange: #e8710a;
+      --ink: #24292f;
+      --muted: #57606a;
+      --line: #e3e6ea;
+      --bg: #f6f8fb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      width: 400px;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: #fff;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    body.as-tab { width: auto; background: var(--bg); }
+    body.as-tab .card {
+      max-width: 560px;
+      margin: 28px auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
+      overflow: hidden;
+      background: #fff;
+    }
+
+    header {
+      padding: 14px 18px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+      color: #fff;
+    }
+    header h1 { margin: 0; font-size: 15px; font-weight: 700; }
+    header p { margin: 3px 0 0; font-size: 12px; opacity: 0.9; }
+
+    main { padding: 16px 18px 18px; }
+
+    .step { margin-bottom: 16px; }
+    .step-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .step-label .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-size: 11px;
+      flex: 0 0 auto;
+    }
+
+    .field-row { display: flex; gap: 6px; }
+    input[type="password"], input[type="text"], select {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid #d0d7de;
+      border-radius: 7px;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+    }
+    .btn {
+      padding: 8px 14px;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 600;
+      border-radius: 7px;
+      cursor: pointer;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-ghost { background: #fff; color: var(--ink); border-color: #d0d7de; }
+    .btn-ghost:hover { background: var(--bg); }
+    .btn-actions { display: flex; gap: 8px; margin-top: 4px; }
+
+    .hint { color: var(--muted); font-size: 12px; margin: 6px 0 0; }
+    .hint a { color: var(--blue); text-decoration: none; }
+    .hint a:hover { text-decoration: underline; }
+
+    #status {
+      display: none;
+      margin-top: 12px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+    #status.show { display: block; }
+    #status.ok { background: #e8f5e9; color: #1b5e20; border: 1px solid #c3e6c8; }
+    #status.err { background: #fdecea; color: #b42318; border: 1px solid #f5c6c2; }
+    #status.info { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+
+    .howto {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+    .howto h2 { margin: 0 0 8px; font-size: 13px; }
+    .howto ol { margin: 0; padding-left: 18px; color: var(--muted); }
+    .howto li { margin-bottom: 4px; }
+    .howto kbd {
+      padding: 1px 5px;
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      background: var(--bg);
+      border: 1px solid #d0d7de;
+      border-radius: 4px;
+    }
+    .privacy {
+      margin-top: 12px;
+      padding: 9px 11px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 11.5px;
+    }
+    .privacy strong { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <h1>🔥 DeepSeek Etymology</h1>
+      <p>网页划词 → 拆词根 → 看词源现场</p>
+    </header>
+
+    <main>
+      <div class="step">
+        <div class="step-label"><span class="num">1</span> 填写 DeepSeek API Key</div>
+        <p class="hint" style="margin: 0 0 7px">这里请填入您申请到的 DeepSeek API Key（以 <b>sk-</b> 开头）。</p>
+        <div class="field-row">
+          <input id="apiKey" type="password" placeholder="sk-xxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false" />
+          <button id="toggleKey" class="btn btn-ghost" type="button">显示</button>
+        </div>
+        <p class="hint">
+          还没有 Key？
+          <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener">到 DeepSeek 开放平台申请</a>
+          （按量计费，查一个单词通常不到 1 分钱）。
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-label"><span class="num">2</span> 选择模型</div>
+        <select id="model">
+          <option value="deepseek-chat">deepseek-chat（推荐 · 快、便宜）</option>
+          <option value="deepseek-reasoner">deepseek-reasoner（推理更强 · 更慢更贵）</option>
+        </select>
+      </div>
+
+      <div class="btn-actions">
+        <button id="save" class="btn btn-primary" type="button">保存</button>
+        <button id="test" class="btn btn-ghost" type="button">保存并测试连接</button>
+      </div>
+
+      <div id="status"></div>
+
+      <div class="howto">
+        <h2>怎么用</h2>
+        <ol>
+          <li>在任意网页上<strong>选中一个英文单词</strong>（最多 3 个词，如 <em>give up</em>）。</li>
+          <li>点击浮出的 <strong>✨ 查词源</strong> 按钮。</li>
+          <li>词源卡片会拆解词根词缀、还原造词现场、给出演变路线。<kbd>Esc</kbd> 或点 × 关闭。</li>
+        </ol>
+      </div>
+
+      <div class="privacy">
+        <strong>隐私说明：</strong>API Key 仅保存在你本机浏览器的扩展存储中，请求由插件后台直接发往
+        <code>api.deepseek.com</code>，不经过任何第三方服务器；本插件也不收集任何浏览数据。
+      </div>
+    </main>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
