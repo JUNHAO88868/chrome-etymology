@@ -9,7 +9,7 @@
     <img src="https://img.shields.io/badge/Powered%20by-DeepSeek-4a9bff?style=flat-square" alt="Powered by DeepSeek">
     <img src="https://img.shields.io/badge/License-MIT-2ea44f?style=flat-square" alt="MIT License">
   </p>
-  <p><sub>76 项自动化测试全部通过 · 只有一个依赖：你自己的 DeepSeek API Key</sub></p>
+  <p><sub>76 项自动化测试，可自行验证 · 只有一个依赖：你自己的 DeepSeek API Key</sub></p>
 </div>
 
 ---
@@ -67,12 +67,16 @@
 
 ### 第 1 步：下载代码
 
-点本页右上角绿色的 **`Code`** 按钮 → **`Download ZIP`**，然后解压到一个**你不会删掉的文件夹**里（比如 `文档/` 下）。
+**方式 A（推荐 · 最干净）**：到 **[Releases 页面](https://github.com/JUNHAO88868/chrome-etymology/releases/latest)** 下载 `chrome-etymology-v1.1.0.zip`，解压得到一个文件夹。里面只有插件运行必需的文件。
 
-> 也可以用 Git：
-> ```bash
-> git clone https://github.com/JUNHAO88868/chrome-etymology.git
-> ```
+**方式 B（拿完整源码）**：点本页右上角绿色的 **`Code`** → **`Download ZIP`**。这会连文档、截图和测试套件一起打包。
+
+**方式 C（Git）**：
+```bash
+git clone https://github.com/JUNHAO88868/chrome-etymology.git
+```
+
+> 📁 无论哪种方式，都请解压到**一个你不会删掉的文件夹**里（比如「文档」下）。放在「下载」里被清理掉的话，插件就会失效。
 
 ### 第 2 步：加载到 Chrome
 
@@ -198,7 +202,9 @@ chrome-etymology/
 ├── options.html       # 设置页 / 工具栏弹窗
 ├── options.js         # 设置页逻辑：保存 Key、切换模型、测试连接
 ├── icons/             # 图标（含 icon.svg 源文件）
+├── tests/             # 76 项自动化测试（node tests/run.mjs）
 ├── assets/            # README 用的截图与横幅
+├── .github/           # Issue 模板
 ├── CHANGELOG.md       # 更新日志
 └── LICENSE            # MIT
 ```
@@ -217,6 +223,30 @@ git clone https://github.com/JUNHAO88868/chrome-etymology.git
 
 - 调试 `content.js`：在网页上按 `F12`，看 Console
 - 调试 `background.js`：`chrome://extensions` → 插件卡片 → 点 **「服务工作线程 / service worker」**
+
+---
+
+## 🧪 测试：76 项，你可以自己验证
+
+上面说「76 项自动化测试全部通过」，你可以自己跑一遍确认：
+
+```bash
+node tests/run.mjs
+```
+
+```
+DeepSeek Etymology · 测试套件
+
+  ✓ background.js：35 通过
+  ✓ content.js  ：24/24 通过
+  ✓ options.js  ：17/17 通过
+
+合计：76 通过 / 0 失败
+```
+
+只需要 **Node.js 18+** 和**任意一个 Chromium 内核浏览器**（找不到浏览器时会自动跳过 DOM 测试，逻辑测试照常运行）。退出码 `0` 表示全绿，可以直接接进 CI。
+
+测试细节见 [tests/README.md](tests/README.md)。其中我特意留了一组**安全回归测试**：把 `<img src=x onerror="...">` 当作大模型返回值喂进去，断言它必须被转义、不能真的在页面里生成元素、脚本不能执行——防止以后改代码时把 XSS 漏洞悄悄改回来。
 
 ---
 

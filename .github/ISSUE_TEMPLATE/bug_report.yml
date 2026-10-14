@@ -1,0 +1,66 @@
+name: 🐛 报告问题
+description: 插件不工作、报错、显示异常
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈！请尽量填完整，尤其是**报错原文**，这能省下好几轮来回排查。
+        提交前请务必删掉 API Key 等隐私信息。
+
+  - type: input
+    id: browser
+    attributes:
+      label: 浏览器与版本
+      description: 在地址栏打开 `chrome://version`，复制第一行
+      placeholder: 例如 Google Chrome 150.0.7871.125 (macOS)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: stage
+    attributes:
+      label: 问题出在哪一步
+      options:
+        - 加载 / 安装插件
+        - 划词后不出现「✨ 查词源」按钮
+        - 点了按钮一直转圈 / 超时
+        - 提示 API Key 相关的错误
+        - 卡片显示或排版异常
+        - 其它
+    validations:
+      required: true
+
+  - type: textarea
+    id: detail
+    attributes:
+      label: 具体情况
+      description: 你做了什么、期望看到什么、实际看到什么
+      placeholder: |
+        1. 我打开了一个 xxx 网页
+        2. 选中了单词 xxx
+        3. 期望 ……，实际 ……
+    validations:
+      required: true
+
+  - type: textarea
+    id: error
+    attributes:
+      label: 报错原文
+      description: |
+        卡片上的红色提示，或者 `chrome://extensions` → 本插件 →「服务工作线程」里的红色报错。
+        ⚠️ 粘贴前请把 API Key、邮箱等隐私信息删掉。
+      render: text
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我确认内容里**不包含我的 API Key** 或其它隐私信息
+          required: true
+        - label: 我已经看过 README 里的「常见问题」部分
+          required: true

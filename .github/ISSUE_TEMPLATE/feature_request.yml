@@ -1,0 +1,36 @@
+name: 💡 功能建议
+description: 想要新功能，或对现有体验有改进想法
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        欢迎提想法！README 的 Roadmap 里已经列了一些方向，可以先看看有没有重复。
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你想解决什么问题
+      description: 先说痛点，再说方案——这样我能判断有没有更简单的实现方式
+      placeholder: 例如：同一个词查两次要花两次钱，我希望查过的词能缓存
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: 你希望的方案
+    validations:
+      required: false
+
+  - type: dropdown
+    id: willing
+    attributes:
+      label: 你愿意自己提 PR 吗
+      options:
+        - 愿意，我可以自己动手
+        - 我可以帮忙测试
+        - 我只是提个想法
+    validations:
+      required: false

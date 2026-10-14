@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../style.css">
+</head><body>
+<p id="w1">inertia</p>
+<p id="w2">12345</p>
+<p id="w3">give up now please</p>
+<p id="w4">give up</p>
+<pre id="out">RUNNING</pre>
+
+<script>
+  // ---- 模拟扩展环境 ----
+  window.__response = { ok: true, text: "## 单词与核心含义\n**inertia** 惯性 <img src=x onerror=\"window.__XSS=1\"> 他说\"不走\" 结束" };
+  window.__sent = [];
+  window.chrome = window.chrome || {};
+  window.chrome.runtime = {
+    lastError: null,
+    sendMessage: function (msg, cb) {
+      window.__sent.push(msg);
+      setTimeout(function () { if (cb) cb(window.__response); }, 0);
+    },
+  };
+</script>
+<script src="../content.js"></script>
+<script>
+(async function () {
+  const results = [];
+  const ok = (n, c, extra) => results.push((c ? 'PASS' : 'FAIL') + ' | ' + n + (c ? '' : ' >> ' + (extra === undefined ? '' : extra)));
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  const btn = () => document.getElementById('dse-word-btn');
+  const panel = () => document.getElementById('dse-word-panel');
+  const body = () => (panel() ? panel().querySelector('.dse-body').innerHTML : '');
+
+  function selectNode(node) {
+    const r = document.createRange();
+    r.selectNodeContents(node);
+    const s = window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+    document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+  }
+
+  // ---------- A. 正常划词 → 按钮 → 卡片 ----------
+  window.__response = { ok: true, text: "## 单词与核心含义\n**inertia** 惯性 <img src=x onerror=\"window.__XSS=1\"> 他说\"不走\" 结束" };
+  selectNode(document.getElementById('w1'));
+  await wait(60);
+  ok('A1 划词后出现按钮', !!btn(), btn() ? btn().textContent : 'no button');
+  ok('A2 按钮文案是「✨ 查词源」', !!btn() && btn().textContent.indexOf('查词源') >= 0);
+
+  if (btn()) btn().click();
+  await wait(60);
+  ok('A3 点击后出现词源卡片', !!panel());
+  ok('A4 卡片标题含单词', !!panel() && panel().querySelector('.dse-title').textContent.indexOf('inertia') >= 0);
+  ok('A5 请求发给了后台', window.__sent.length === 1 && window.__sent[0].type === 'ETYMOLOGY_REQUEST' && window.__sent[0].word === 'inertia', JSON.stringify(window.__sent));
+  ok('A6 Markdown 标题已渲染为 h2', body().indexOf('<h2>') >= 0, body().slice(0, 120));
+  ok('A7 粗体已渲染为 strong', body().indexOf('<strong>inertia</strong>') >= 0);
+  ok('A8 页脚存在', !!panel() && !!panel().querySelector('.dse-footer'));
+
+  // ---------- B. 安全性：HTML 注入必须被转义 ----------
+  ok('B1 尖括号被转义', body().indexOf('&lt;img') >= 0, body());
+  ok('B2 页面里没有真的插入 img 元素', document.querySelectorAll('#dse-word-panel img').length === 0);
+  ok('B3 恶意脚本没有执行', window.__XSS === undefined);
+  ok('B4 英文双引号被换成「」', body().indexOf('「不走」') >= 0, body());
+
+  // ---------- C. 没填 Key 的引导 ----------
+  window.__sent.length = 0;
+  window.__response = { ok: false, code: 'NO_KEY', error: 'x' };
+  selectNode(document.getElementById('w1'));
+  await wait(60);
+  if (btn()) btn().click();
+  await wait(60);
+  ok('C1 显示引导卡片', body().indexOf('还差一步') >= 0, body().slice(0, 100));
+  const optBtn = panel() && panel().querySelector('#dse-open-options');
+  ok('C2 引导里有「去填写 API Key」按钮', !!optBtn);
+  if (optBtn) optBtn.click();
+  await wait(20);
+  ok('C3 点击后请求后台打开设置页',
+     window.__sent.some(function (m) { return m.type === 'OPEN_OPTIONS'; }),
+     JSON.stringify(window.__sent));
+
+  // ---------- D. 接口报错的展示 ----------
+  window.__response = { ok: false, code: 'AUTH', error: 'API Key 无效或已过期，请在插件设置里重新填写。' };
+  selectNode(document.getElementById('w1'));
+  await wait(60);
+  if (btn()) btn().click();
+  await wait(60);
+  ok('D1 错误信息展示出来', body().indexOf('API Key 无效') >= 0, body());
+  ok('D2 错误样式类存在', body().indexOf('dse-error') >= 0);
+
+  // ---------- E. 非英文/超长选择不应该出按钮 ----------
+  if (panel()) panel().remove();
+  selectNode(document.getElementById('w2'));
+  await wait(60);
+  ok('E1 选中数字不出按钮', !btn());
+
+  selectNode(document.getElementById('w3'));
+  await wait(60);
+  ok('E2 选中 4 个词不出按钮', !btn());
+
+  selectNode(document.getElementById('w4'));
+  await wait(60);
+  ok('E3 选中短语 give up 出按钮（最多 3 词）', !!btn());
+
+  // ---------- F. Esc 关闭 ----------
+  if (btn()) btn().click();
+  await wait(60);
+  ok('F1 卡片已打开', !!panel());
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  await wait(20);
+  ok('F2 Esc 关闭卡片', !panel());
+  ok('F3 Esc 也收起按钮', !btn());
+
+  // ---------- G. 插件被重载后（上下文失效）不能崩 ----------
+  window.chrome.runtime.sendMessage = function () { throw new Error('Extension context invalidated.'); };
+  selectNode(document.getElementById('w1'));
+  await wait(60);
+  if (btn()) btn().click();
+  await wait(60);
+  ok('G1 上下文失效时给出友好提示而不是崩溃', body().indexOf('刷新') >= 0, body().slice(0, 120));
+
+  document.getElementById('out').textContent = 'RESULTS\n' + results.join('\n') + '\nDONE';
+})();
+</script>
+</body></html>

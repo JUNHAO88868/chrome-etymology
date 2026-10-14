@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📖 使用说明与常见问题
+    url: https://github.com/JUNHAO88868/chrome-etymology
+    about: 安装步骤、报错排查、隐私说明，先看这里
+  - name: 🔑 申请 DeepSeek API Key
+    url: https://platform.deepseek.com/api_keys
+    about: 本插件不自带 Key，需要你自己的（按量计费，查一个词通常不到 1 分钱）

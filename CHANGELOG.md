@@ -44,6 +44,19 @@
 | `content.js` | 24 | 划词→按钮→卡片全流程、Markdown 渲染、**HTML 转义与 XSS 防护**、无 Key 引导、错误展示、选择校验、Esc 关闭、上下文失效兜底 |
 | `options.js` | 17 | 配置载入、Key 显示切换、非法 Key 拦截、保存、测试连接成功/失败、回车保存、模型切换 |
 
+测试套件已随仓库提供，**任何人都能自己验证**：
+
+```bash
+node tests/run.mjs     # 合计：76 通过 / 0 失败
+```
+
+### 🧰 工程化
+
+- 测试入库到 `tests/`，一键运行；没有无头浏览器时自动跳过 DOM 测试而非报错
+- 支持用 `CHROME_PATH` 指定浏览器；`--headless=old` 不可用时自动退回 `--headless=new`
+- 测试通过 `new URL('../x.js', import.meta.url)` 定位源码，**不含任何写死的本机路径**
+- 新增 GitHub Issue 模板（Bug 报告 / 功能建议），Bug 模板里明确提醒不要粘贴 API Key
+
 ---
 
 ## [1.0.0] — 2026-10-13

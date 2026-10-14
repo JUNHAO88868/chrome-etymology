@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"></head><body>
+<div id="stage"></div>
+<pre id="out">RUNNING</pre>
+<script>
+  window.__saved = null;
+  window.__msgs = [];
+  window.__resp = { ok: true, ms: 123, model: 'deepseek-chat' };
+  window.chrome = {
+    storage: { local: {
+      get: async function () { return { apiKey: 'sk-existing-key', model: 'deepseek-reasoner' }; },
+      set: async function (o) { window.__saved = Object.assign(window.__saved || {}, o); },
+    } },
+    runtime: {
+      sendMessage: function (msg, cb) {
+        window.__msgs.push(msg);
+        var p = Promise.resolve(window.__resp);
+        if (cb) { p.then(cb); return; }
+        return p;
+      },
+    },
+  };
+  // 把真实 options.html 的表单结构搬进来（与 options.js 期望的 id 完全一致）
+  document.getElementById('stage').innerHTML = `
+    <input id="apiKey" type="password" />
+    <button id="toggleKey">显示</button>
+    <select id="model">
+      <option value="deepseek-chat">chat</option>
+      <option value="deepseek-reasoner">reasoner</option>
+    </select>
+    <button id="save">保存</button>
+    <button id="test">保存并测试连接</button>
+    <div id="status"></div>
+  `;
+</script>
+<script src="../options.js"></script>
+<script>
+(async function () {
+  var results = [];
+  var ok = function (n, c, extra) { results.push((c ? 'PASS' : 'FAIL') + ' | ' + n + (c ? '' : ' >> ' + extra)); };
+  var wait = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+  var $ = function (id) { return document.getElementById(id); };
+
+  await wait(80); // 等 options.js 的 load()
+
+  ok('O1 载入已存的 API Key', $('apiKey').value === 'sk-existing-key', $('apiKey').value);
+  ok('O2 载入已存的模型', $('model').value === 'deepseek-reasoner', $('model').value);
+  ok('O3 宽屏时加上 as-tab 类（居中卡片）', document.body.classList.contains('as-tab'));
+
+  // 显示/隐藏 Key
+  $('toggleKey').click();
+  ok('O4 点击后 Key 明文显示', $('apiKey').type === 'text' && $('toggleKey').textContent === '隐藏',
+     $('apiKey').type + '/' + $('toggleKey').textContent);
+  $('toggleKey').click();
+  ok('O5 再点一次恢复隐藏', $('apiKey').type === 'password' && $('toggleKey').textContent === '显示');
+
+  // 非法 Key 应被拦下
+  $('apiKey').value = 'not-a-key';
+  $('save').click();
+  await wait(30);
+  ok('O6 非法 Key 给出警告', $('status').textContent.indexOf('sk-') >= 0, $('status').textContent);
+  ok('O7 非法 Key 不写入存储', window.__saved === null, JSON.stringify(window.__saved));
+
+  // 合法 Key 保存（含首尾空格，应被 trim）
+  $('apiKey').value = '  sk-good-key  ';
+  $('save').click();
+  await wait(30);
+  ok('O8 合法 Key 保存成功', !!window.__saved && window.__saved.apiKey === 'sk-good-key', JSON.stringify(window.__saved));
+  ok('O9 保存提示是「已保存」', $('status').textContent.indexOf('已保存') >= 0, $('status').textContent);
+  ok('O10 status 用 ok 样式', $('status').className.indexOf('ok') >= 0, $('status').className);
+
+  // 测试连接成功
+  $('test').click();
+  await wait(80);
+  ok('O11 发出 TEST_CONNECTION', window.__msgs.some(function (m) { return m.type === 'TEST_CONNECTION'; }), JSON.stringify(window.__msgs));
+  ok('O12 显示连接成功与耗时', $('status').textContent.indexOf('连接成功') >= 0 && $('status').textContent.indexOf('123') >= 0, $('status').textContent);
+  ok('O13 测试后按钮恢复可用', $('test').disabled === false);
+
+  // 测试连接失败
+  window.__resp = { ok: false, code: 'AUTH', error: 'API Key 无效或已过期，请在插件设置里重新填写。' };
+  $('test').click();
+  await wait(80);
+  ok('O14 失败时显示错误原因', $('status').textContent.indexOf('API Key 无效') >= 0, $('status').textContent);
+  ok('O15 失败时用 err 样式', $('status').className.indexOf('err') >= 0, $('status').className);
+
+  // 输入框回车即保存
+  window.__saved = null;
+  $('apiKey').value = 'sk-by-enter';
+  $('apiKey').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  await wait(40);
+  ok('O16 回车即保存', !!window.__saved && window.__saved.apiKey === 'sk-by-enter', JSON.stringify(window.__saved));
+
+  // 切换模型即时保存
+  window.__saved = null;
+  $('model').value = 'deepseek-chat';
+  $('model').dispatchEvent(new Event('change', { bubbles: true }));
+  await wait(40);
+  ok('O17 切换模型即时保存', !!window.__saved && window.__saved.model === 'deepseek-chat', JSON.stringify(window.__saved));
+
+  document.getElementById('out').textContent = 'RESULTS\n' + results.join('\n') + '\nDONE';
+})();
+</script>
+</body></html>
